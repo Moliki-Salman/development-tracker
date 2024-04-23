@@ -9,7 +9,7 @@ const {
   queryValues,
   userSignup,
   userLogin,
-} = require("../model/users-model");
+} = require("../model/user-model");
 
 const signup = async (req, res) => {
   const user = {
