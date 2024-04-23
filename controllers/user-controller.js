@@ -33,7 +33,7 @@ const signup = async (req, res) => {
       .status(201)
       .json({ mesaage: "User created Successfully", result, token });
   } catch (err) {
-    res.satus(400).json({ err, message: "invalid" });
+    res.status(400).json({ err, message: "invalid" });
     console.log(err);
   }
 };
@@ -50,7 +50,6 @@ const login = async (req, res) => {
     if (comparePassword) {
       const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);
       res.status(200).json({ message: "User login successful", token });
-      console.log(token);
     } else {
       res.status(403).json({ message: "invalid Login Credentials" });
     }
