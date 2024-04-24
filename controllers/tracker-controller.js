@@ -11,7 +11,7 @@ let initialPromptSent = false;
 const devTracker = async (req, res) => {
   try {
     // Check if userEmail and dob are not set
-    if (!userEmail && !fullname && !dob) {
+    if (!userEmail || !fullname || !dob) {
       // Set userEmail and dob from req.body
       userEmail = req.body.userEmail;
       fullname = req.body.fullname;
