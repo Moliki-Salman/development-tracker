@@ -1,5 +1,5 @@
 
-# developmet-tracker
+# development-tracker
 development-tracker is an API that allows Users the ability to actively track and improve their child's developmental journey. 
 
 The project is written with Javascript using express Node.js application framework and MySQL as the database.
