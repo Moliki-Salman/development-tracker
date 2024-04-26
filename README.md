@@ -1,13 +1,13 @@
 
-# tinyURL
-development-tracker is an API that allows parents or guidiance the ability to actively track and improve their child's developmental journey. 
+# developmet-tracker
+development-tracker is an API that allows Users the ability to actively track and improve their child's developmental journey. 
 
-The project is written with Javascript using express Node.js application framework and mySQL as the database.
+The project is written with Javascript using express Node.js application framework and MySQL as the database.
 ## Features
 
 1. User can signup and login to their account. 
 
-2.•	User can reset their password. 
+2.	User can reset their password. 
 
 3. User account activated using JSON web token authenitcation. 
 
@@ -16,27 +16,44 @@ The project is written with Javascript using express Node.js application framewo
 5. Authorized User can create an account for multiple children to enable them to be able to use the tenderCare development tracker. 
 
 ## Getting started
+
 Install node from the website and download node for your device type:
 ```bash
 $  https://nodejs.org/en
 ```
-Install MongoDB  for your operating system from the website: 
+create a MySQL database connection 
 ```bash
-$  https://www.mongodb.com/docs/manual/installation/
+$ https://www.clever-cloud.com/product/mysql/
 ```
 Clone this repository and run locally
 ```bash
-git clone https://github.com/Moliki-Salman/tinyURL.git
+https://github.com/Moliki-Salman/development-tracker.git
 ```
 Run this code to get started
 ```bash
  npm install
 ```
+## To work on the project locally
 
-## Running the App
-
-1. start the application by running:
+1. set your desired Port number in your .env file
+  
+2. Get your personal openai API key and set it in the project .env file.
+```bash
+$ https://platform.openai.com/api-keys 
+```
+3.   start the application by running:
 ```bash
 $ nodemon app.js 
 ```
-2. connect the API using postman on port 4000
+4. connect the API using postman on the desired port set in the project .env file.
+
+## Hosting
+The app is availabe on render hosting service
+```bash
+$ https://development-tracker.onrender.com
+```
+## Running the App
+```bash
+$  coonect to the API using postman on https://development-tracker.onrender.com
+```
+
