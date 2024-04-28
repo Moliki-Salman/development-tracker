@@ -52,8 +52,12 @@ The app is availabe on render hosting service
 ```bash
 $ https://development-tracker.onrender.com
 ```
-## Running the App
+## Endpoints
 ```bash
-$  coonect to the API using postman on https://development-tracker.onrender.com
+1. POST /signup
+2. POST /login
+3. POST /resetPassword
+4. POST /child
+5. POST /tracker
 ```
 
