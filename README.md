@@ -55,10 +55,10 @@ $ https://development-tracker.onrender.com
 ```bash
 | HTTP Verbs | Endpoints | Action |
 | --- | --- | --- |
-1. POST /signup
-2. POST /login
-3. POST /resetPassword
-4. POST /child
-5. POST /tracker
+1. | POST | /signup | To sign up a new user account |
+2. | POST | /login | To login an existing user account |
+3. | POST | /resetPassword | To allow user to reset password |
+4. | POST | /child | To create a child profile under a user account | 
+5. | POST | /tracker | To allow user to interact with the development tracker | 
 ```
 
