@@ -17,19 +17,20 @@ The project is written with Javascript using express Node.js application framewo
 
 ## Getting started
 
-. Install node from the website and download node for your device type:
+•	Install node from the website and download node for your device type:
+
 ```bash
 $  https://nodejs.org/en
 ```
-. Create a MySQL database connection 
+• Create a MySQL database connection 
 ```bash
 $ https://www.clever-cloud.com/product/mysql/
 ```
-. Clone this repository and run locally
+• Clone this repository and run locally
 ```bash
 https://github.com/Moliki-Salman/development-tracker.git
 ```
-. Run this code to get started
+• Run this code to get started
 ```bash
  npm install
 ```
