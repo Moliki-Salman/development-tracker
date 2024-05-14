@@ -17,36 +17,34 @@ The project is written with Javascript using express Node.js application framewo
 
 ## Getting started
 
-•	Install node from the website and download node for your device type:
+1.	Install node from the website and download node for your device type:
 
 ```bash
 $  https://nodejs.org/en
 ```
-• Create a MySQL database connection 
+2. Install MySQL locally 
 ```bash
-$ https://www.clever-cloud.com/product/mysql/
+$ https://dev.mysql.com/downloads/mysql/
 ```
-• Clone this repository and run locally
+3. Clone this repository and run locally
 ```bash
 https://github.com/Moliki-Salman/development-tracker.git
 ```
-• Run this code to get started
+4. Run this code to download the projects' dependencies 
 ```bash
  npm install
 ```
-## To work on the project locally
-
-1. Set your desired Port number in your .env file
+5. Set your desired Port number in your .env file
   
-2. Get your personal openai API key and set it in the project .env file.
+6. Get your personal openai API key and set it in the project .env file.
 ```bash
 $ https://platform.openai.com/api-keys 
 ```
-3.   Start the application by running:
+7.   Start the application by running:
 ```bash
 $ nodemon app.js 
 ```
-4. Connect the API using postman on the desired port set in the project .env file.
+8. Connect the API using postman on the desired port set in the project .env file.
 
 ## Hosting
 The app is availabe on render hosting service
