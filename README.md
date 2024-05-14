@@ -36,17 +36,17 @@ https://github.com/Moliki-Salman/development-tracker.git
 ```
 ## To work on the project locally
 
-1. set your desired Port number in your .env file
+1. Set your desired Port number in your .env file
   
 2. Get your personal openai API key and set it in the project .env file.
 ```bash
 $ https://platform.openai.com/api-keys 
 ```
-3.   start the application by running:
+3.   Start the application by running:
 ```bash
 $ nodemon app.js 
 ```
-4. connect the API using postman on the desired port set in the project .env file.
+4. Connect the API using postman on the desired port set in the project .env file.
 
 ## Hosting
 The app is availabe on render hosting service
