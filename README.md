@@ -61,4 +61,5 @@ $ https://development-tracker.onrender.com
 4. | POST | /child | To create a child profile under a user account | 
 5. | POST | /tracker | To allow user to interact with the development tracker | 
 ```
-
+### License
+This project is available for use under the MIT License.
