@@ -51,7 +51,7 @@ The app is availabe on render hosting service
 ```bash
 $ https://development-tracker.onrender.com
 ```
-## Endpoints
+## API Endpoints
 ```bash
 1. POST /signup
 2. POST /login
