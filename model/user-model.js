@@ -21,6 +21,14 @@ const User = sequelize.define("user", {
     type: Sequelize.STRING,
     allowNul: false,
   },
+  salt: {
+    type: Sequelize.STRING,
+    allowNul: false,
+  },
+  otp: {
+    type: Sequelize.STRING,
+    allowNul: false,
+  },
 });
 
 sequelize
@@ -31,4 +39,5 @@ sequelize
   .catch((err) => {
     console.error("Error creating user table", err);
   });
-  module.exports = { User }
+
+module.exports = { User };

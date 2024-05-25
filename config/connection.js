@@ -1,14 +1,17 @@
+const mysql2 = require("mysql2");
 const Sequelize = require("sequelize");
 const dotenv = require("dotenv");
-dotenv.config();
+const path = require("path")
 
-const mysql2 = require("mysql2");
+const envPath = path.resolve(__dirname, "../.env");
+dotenv.config({ path: envPath });
+
 const sequelize = new Sequelize(
-  "biw5tmo9kixy1gopsdof", //db name
-  "uvllhavataemedaz", //user , for local db set it to root
-  "RPBEtYuwBVkKDH7H3fjd", // password
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
   {
-    host: "biw5tmo9kixy1gopsdof-mysql.services.clever-cloud.com", //for local, set it to localhost
+    host: process.env.DB_HOST, //for local, set it to localhost
     dialect: "mysql",
   }
 );

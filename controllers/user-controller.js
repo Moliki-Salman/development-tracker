@@ -1,61 +1,99 @@
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const dotenv = require("dotenv");
-dotenv.config();
-// const saltRounds = bcrypt.genSaltSync(10);
-const saltRounds = 10;
-const {
-  checkConnection,
-  queryValues,
-  userSignup,
-  userLogin,
-} = require("../model/user-model");
+const path = require("path");
+const fs = require("fs");
+const ErrorResponse = require("../controllers/error-response");
+const { User } = require("../model/user-model");
+const { authpassword, hash, generateOTP } = require("./encrypt-password");
 
-const signup = async (req, res) => {
-  const user = {
-    fullname: req.body.fullname,
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, saltRounds),
-  };
-  if (!user) {
-    return res.status(400).json({ message: "Missing required fields" });
-  }
-
-  const connection = await checkConnection();
-  try {
-    const result = await queryValues(connection, userSignup, [
-      user.fullname,
-      user.email,
-      user.password,
-    ]);
-    const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);
-    res
-      .status(201)
-      .json({ mesaage: "User created Successfully", result, token });
-  } catch (err) {
-    res.status(400).json({ err, message: "invalid" });
-    console.log(err);
-  }
+const readEmailTemplate = (templateName) => {
+  const emailTemplatePath = path.join(
+    __dirname,
+    "..",
+    "templates",
+    `${templateName}.html`
+  );
+  const emailTemplate = fs.readFileSync(emailTemplatePath, "utf-8");
+  return emailTemplate;
 };
 
-const login = async (req, res) => {
-  const user = {
-    email: req.body.email,
-    password: req.body.password,
-  };
-  const connection = await checkConnection();
+//register a user by email, email verification
+/*
+email template function
+signup{
+  req.body fullname,emAIL, PASSWORD
+  check if email already exist in the database
+define validEmailRegex
+check for !validEmailRegex
+check for  the password entered meets the requirements
+define salt and hash the salt
+define password // hash the password entered using the function created to hash
+read email template
+send email
+return result
+*/
+const signup = async (req, res, next) => {
+  const salt = hash();
+  const { fullname, email, password } = req.body;
+  if (!fullname || !email || !password) {
+    return next(new ErrorResponse("Content cannot be empty", 400));
+  }
   try {
-    const result = await queryValues(connection, userLogin, [user.email]);
-    const comparePassword = bcrypt.compare(user.password, result[0].password);
-    if (comparePassword) {
-      const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);
-      res.status(200).json({ message: "User login successful", token });
-    } else {
-      res.status(403).json({ message: "invalid Login Credentials" });
+    const validEmailRegex =
+      /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+
+    if (!validEmailRegex.test(email)) {
+      return next(new ErrorResponse("Invalid email format", 400));
     }
+
+    if (
+      !(
+        password.length >= 6 &&
+        /[A-Z]/.test(password) &&
+        /[a-z]/.test(password) &&
+        /[0-9]/.test(password)
+      )
+    ) {
+      return next(
+        new ErrorResponse("Password does not meet the requirements", 401)
+      );
+    }
+
+    const hashedPassword = authpassword(salt, password);
+
+    const existingUser = await User.findOne({ where: { email: email } });
+    if (existingUser) {
+      return next(new ErrorResponse("User already exist", 401));
+    }
+
+    const otp = generateOTP();
+
+    const newUser = {
+      fullname: req.body.fullname,
+      email: req.body.email,
+      password: hashedPassword,
+      salt: salt,
+      otp: otp,
+    };
+    const result = await User.create(newUser);
+
+const emailTemplate = readEmailTemplate("verification-email");
+const firstName = fullname.split(" ")[0];
+  const emailContent = emailTemplate
+    .replace("{{firstName}}", firstName)
+    .replace("{{otp}}", otp);
+
+
+
+
+    return res
+      .status(201)
+      .json({ message: "User created successfully", result });
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    res.status(500).json({
+      message: "Internal Server error",
+      error: JSON.stringify(error),
+    });
   }
 };
 
-module.exports = { signup, login };
+module.exports = { signup };
