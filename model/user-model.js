@@ -5,29 +5,29 @@ const User = sequelize.define("user", {
   user_id: {
     type: Sequelize.UUID,
     defaultValue: Sequelize.UUIDV4,
-    allowNul: false,
+    allowNull: false,
     primaryKey: true,
   },
   fullname: {
     type: Sequelize.STRING,
-    allowNul: false,
+    allowNull: false,
   },
   email: {
     type: Sequelize.STRING,
-    allowNul: false,
+    allowNull: false,
     unique: true,
   },
   password: {
     type: Sequelize.STRING,
-    allowNul: false,
+    allowNull: false,
   },
   salt: {
     type: Sequelize.STRING,
-    allowNul: false,
+    allowNull: false,
   },
   otp: {
     type: Sequelize.STRING,
-    allowNul: false,
+    allowNull: false,
   },
   isVerified: {
     type: Sequelize.BOOLEAN,

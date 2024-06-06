@@ -107,75 +107,69 @@ const signup = async (req, res, next) => {
   }
 };
 
+
 const userEmailVerification = async (req, res, next) => {
-// get otp from the request body
-  const otp = req.query.otp;
-  //find if otp eixst in database
-  const checkOTP = await User.findOne({ where: { otp: otp } });
-  console.log(checkOTP);
-};
-if (!checkOTP) {
-  return next(new ErrorResponse("otp not found....", 404));
-} else{
-  return res
-    .status(201)
-    .json({ message: "Email Verification successful, Proceed to login" });
-}
-
-// check that the otp in the req is the same as the stored in the database
-
-
-module.exports = { signup };
-
-
-const verifyAdminEmail = async (req, res, next) => {
   try {
-    // create connection to database
-    const connection = await connectDB();
+    const { email, otp } = req.body;
 
-    // get credentials entered during login
-    const emailToken = req.query.emailToken;
-
-    console.log(emailToken);
-
-    // run a query to confirm the email enetered exists in the database
-    const checkToken = await runQuery(connection, AdminEmailToken, [
-      emailToken,
-    ]);
-
-    console.log(checkToken);
-
-    if (!emailToken) {
-      return next(new ErrorResponse("EmailToken not found....", 404));
+    if (!otp) {
+      return next(new ErrorResponse("Input OTP....", 400));
     }
 
-    // check that the emailToken in the req is the same as the on in the database
-    if (
-      !checkToken ||
-      checkToken.length === 0 ||
-      checkToken[0].emailToken !== emailToken
-    ) {
-      return next(
-        new ErrorResponse("Email Verification Failed, invalid token", 401)
-      );
+    if (!email) {
+      return next(new ErrorResponse("Email is required....", 400));
     }
 
-    // checkToken.emailToken = null;
-    isVerified = true;
+    console.log("Checking for user with email:", email);
 
-    const updateVerification = await runQuery(connection, updatAdminVerify, [
-      isVerified,
-      emailToken,
-    ]);
+    const user = await User.findOne({
+      where: { email },
+    });
 
-    // send a successful login message to the client side
+    console.log("User found:", user);
+
+    if (!user) {
+      return next(new ErrorResponse("User not found....", 404));
+    }
+
+    if (user.otp !== otp) {
+      return next(new ErrorResponse("Invalid OTP....", 401));
+    }
+
+    console.log("OTP is valid, updating user status");
+
+    const result = await User.update(
+      { isVerified: true, otp: '' },
+      { where: { email } }
+    );
+
+    console.log("User update result:", result);
+
     res.status(200).json({
-      status: true,
       message: "Email Verification successful, Proceed to login",
-      data: { isVerified: true },
     });
   } catch (err) {
-    // handle error using the inbult error details
+    console.error("Error during user verification:", err);
     return next(err);
   }
 };
+
+
+const login = async(req, res, next ) => {
+ const { email, password } = req.body;
+ try {
+const existingUser = await User.findOne({ where: {email: email }})
+ if (!existingUser) {
+   return next(new ErrorResponse("Account does not exist. Signup", 409));
+ }
+const userSalt = User.findOne({
+where: { email: email},
+attributes: ['salt']
+})
+console.log(userSalt);
+ } catch (error) {
+
+ }
+}
+
+module.exports = { signup, userEmailVerification, login };
