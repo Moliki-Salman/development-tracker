@@ -156,19 +156,25 @@ const userEmailVerification = async (req, res, next) => {
 
 
 const login = async(req, res, next ) => {
- const { email, password } = req.body;
+ const { email } = req.body;
  try {
-const existingUser = await User.findOne({ where: {email: email }})
- if (!existingUser) {
+const user = await User.findOne({ where: {email: email }})
+ if (!user) {
    return next(new ErrorResponse("Account does not exist. Signup", 409));
  }
-const userSalt = User.findOne({
-where: { email: email},
-attributes: ['salt']
-})
-console.log(userSalt);
- } catch (error) {
+const userSalt = await User.findOne({
+  where: { email: email },
+  attributes: ["salt"],
+});
+if (!userSalt) {
+  return next(new ErrorResponse("User salt not found", 404));
+}
+console.log("HERE IS THE SALT", userSalt);
+res.status(200).json(userSalt);
 
+ } catch (err) {
+console.error("Error during user verification:", err);
+return next(err);
  }
 }
 
