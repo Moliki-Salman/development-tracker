@@ -107,7 +107,6 @@ const signup = async (req, res, next) => {
   }
 };
 
-
 const userEmailVerification = async (req, res, next) => {
   try {
     const { email, otp } = req.body;
@@ -139,7 +138,7 @@ const userEmailVerification = async (req, res, next) => {
     console.log("OTP is valid, updating user status");
 
     const result = await User.update(
-      { isVerified: true, otp: '' },
+      { isVerified: true, otp: "" },
       { where: { email } }
     );
 
@@ -154,28 +153,95 @@ const userEmailVerification = async (req, res, next) => {
   }
 };
 
+const login = async (req, res, next) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ where: { email: email } });
+    if (!user) {
+      return next(new ErrorResponse("Account does not exist. Signup", 409));
+    }
+    const userSalt = await User.findOne({
+      where: { email: email },
+      attributes: ["salt"],
+    });
+    if (!userSalt) {
+      return next(new ErrorResponse("User salt not found", 404));
+    }
+    const hashedPassword = authpassword(salt, password);
+    console.log("HERE IS THE SALT", userSalt);
+    res.status(200).json(userSalt);
+  } catch (err) {
+    console.error("Error during user verification:", err);
+    return next(err);
+  }
+};
 
-const login = async(req, res, next ) => {
- const { email } = req.body;
- try {
-const user = await User.findOne({ where: {email: email }})
- if (!user) {
-   return next(new ErrorResponse("Account does not exist. Signup", 409));
- }
-const userSalt = await User.findOne({
-  where: { email: email },
-  attributes: ["salt"],
-});
-if (!userSalt) {
-  return next(new ErrorResponse("User salt not found", 404));
-}
-console.log("HERE IS THE SALT", userSalt);
-res.status(200).json(userSalt);
+//function to resend verification link
+const resendVerificatioLink = async (req, res, next) => {
+  const { email } = req.body;
 
- } catch (err) {
-console.error("Error during user verification:", err);
-return next(err);
- }
-}
+  try {
+    const user = await User.findOne({
+      where: { email },
+    });
+    if (!user) {
+      return next(new ErrorResponse("Invalid Email", 401));
+    }
+    const otp = generateOTP();
 
-module.exports = { signup, userEmailVerification, login };
+    const result = await User.update({ otp: otp }, { where: { email } });
+
+    const emailTemplate = readEmailTemplate("verification-email");
+    const firstName = fullname.split(" ")[0];
+    const verificationLink = `http://localhost:3000/resentvericationlink?otp=${otp}`;
+
+    const emailContent = emailTemplate
+      .replace("{{firstName}}", firstName)
+      .replace("{verificationLink}}", verificationLink);
+
+    const options = {
+      from: process.env.EMAIL_ADDRESS,
+      to: email,
+      subject: "Verify your email...",
+      html: emailContent,
+    };
+
+    await sendMail(options);
+    return res
+      .status(200)
+      .json({ message: "Email resent  successfully", result: otp });
+  } catch (err) {
+    return next(err);
+  }
+};
+
+const resetPassword = async (req, res, next) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ where: { email: email } });
+    if (!user) {
+      return next(new ErrorResponse("User does not exist", 409));
+    }
+    const salt = hash();
+    const hassPassword = authpassword(salt, password);
+
+    const result = await User.update(
+      { salt: salt, password: hassPassword },
+      { where: { email } }
+    );
+
+    return res
+      .status(200)
+      .json({ message: "Pssword reset successfully", result });
+  } catch (err) {
+    console.error("Error during reset:", err);
+    return next(err);
+  }
+};
+
+module.exports = {
+  signup,
+  userEmailVerification,
+  login,
+  resendVerificatioLink,
+};
