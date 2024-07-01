@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const path = require("path");
 const fs = require("fs");
 const ErrorResponse = require("../controllers/error-response");
@@ -16,26 +17,6 @@ const readEmailTemplate = (templateName) => {
   return emailTemplate;
 };
 
-//register a user by email, email verification
-/*
-email template function
-signup{
-  req.body fullname,emAIL, PASSWORD
-  check if email already exist in the database
-define validEmailRegex
-check for !validEmailRegex
-check for  the password entered meets the requirements
-define salt and hash the salt
-define password // hash the password entered using the function created to hash
-read email template
-send email
-return result
-//what i want to learn better insighnt in my proficiency in pyton to 80%
-i want to learn and grow at what percentage.
-i want to be able to add machine learning skills to my better science skills.
-show me you are already in point a and ineed to move to point be.
-do i have skiils gaps, why not create the skill gaps as a point  to learn.
-*/
 const signup = async (req, res, next) => {
   const salt = hash();
   const { fullname, email, password } = req.body;
@@ -154,22 +135,27 @@ const userEmailVerification = async (req, res, next) => {
 };
 
 const login = async (req, res, next) => {
-  const { email } = req.body;
+  const { email, password } = req.body;
+if (!email || !password) {
+  return next(new ErrorResponse("Content cannot be empty", 400));
+}
   try {
     const user = await User.findOne({ where: { email: email } });
     if (!user) {
       return next(new ErrorResponse("Account does not exist. Signup", 409));
     }
-    const userSalt = await User.findOne({
+    const salt = await User.findOne({
       where: { email: email },
       attributes: ["salt"],
     });
-    if (!userSalt) {
+    if (!salt) {
       return next(new ErrorResponse("User salt not found", 404));
     }
     const hashedPassword = authpassword(salt, password);
-    console.log("HERE IS THE SALT", userSalt);
-    res.status(200).json(userSalt);
+    console.log("HERE IS THE SALT", salt);
+
+    const token = jwt.sign({ email: user.email }, process.env.SECRET_KEY);
+    res.status(200).json({ message: "User Login successfully", token });;
   } catch (err) {
     console.error("Error during user verification:", err);
     return next(err);
@@ -177,9 +163,8 @@ const login = async (req, res, next) => {
 };
 
 //function to resend verification link
-const resendVerificatioLink = async (req, res, next) => {
-  const { email } = req.body;
-
+const resendVerificationLink = async (req, res, next) => {
+  const { fullname, email } = req.body;
   try {
     const user = await User.findOne({
       where: { email },
@@ -232,7 +217,7 @@ const resetPassword = async (req, res, next) => {
 
     return res
       .status(200)
-      .json({ message: "Pssword reset successfully", result });
+      .json({ message: "Password reset successfully, Back to Login ", result });
   } catch (err) {
     console.error("Error during reset:", err);
     return next(err);
@@ -243,5 +228,6 @@ module.exports = {
   signup,
   userEmailVerification,
   login,
-  resendVerificatioLink,
+  resendVerificationLink,
+  resetPassword,
 };
