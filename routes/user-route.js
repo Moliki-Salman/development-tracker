@@ -7,6 +7,7 @@ const {
   resendVerificationLink,
   resetPassword,
 } = require("../controllers/user-controller");
+const{ userAuth } = require("../config/authenticate")
 // const { resetPassword } = require("../controllers/userResetPassword");
 const { child } = require("../controllers/child-controller");
 
@@ -15,6 +16,6 @@ userRouter.post("/login", login);
 userRouter.post("/emailverification", userEmailVerification);
 userRouter.get("/resetpassword", resetPassword);
 userRouter.post("/resendverificationlink", resendVerificationLink);
-userRouter.post("/child", child);
+userRouter.post("/child",userAuth, child);
 
 module.exports = { userRouter };
