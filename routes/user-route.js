@@ -7,15 +7,15 @@ const {
   resendVerificationLink,
   resetPassword,
 } = require("../controllers/user-controller");
-const{ userAuth } = require("../config/authenticate")
+// const{ userAuth } = require("../config/authenticate")
 // const { resetPassword } = require("../controllers/userResetPassword");
-const { child } = require("../controllers/child-controller");
+const { userChild } = require("../controllers/child-controller");
 
 userRouter.post("/signup", signup);
 userRouter.post("/login", login);
 userRouter.post("/emailverification", userEmailVerification);
 userRouter.get("/resetpassword", resetPassword);
 userRouter.post("/resendverificationlink", resendVerificationLink);
-userRouter.post("/child",userAuth, child);
+userRouter.post("/child", userChild);
 
 module.exports = { userRouter };
