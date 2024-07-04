@@ -1,4 +1,5 @@
 const { Child } = require("../model/child-model");
+const ErrorResponse = require("../controllers/error-response");
 
 // const child = async (req, res) => {
 // const { fullname, biologicalSex, dob } = req.body
@@ -35,8 +36,10 @@ if (!childData) {
 }
 const result = await Child.create(childData)
 res.status(200).json({message: "child data registered successfully", result});
+next()
 } catch (err) {
 console.log(err);
+return next(err)
 }
 }
 

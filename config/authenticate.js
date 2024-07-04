@@ -5,7 +5,7 @@ dotenv.config();
 const userAuth = async (req, res, next) => {
   const bearer = req.headers["authorization"];
   if (typeof bearer == "undefined") {
-    res.status(403).json({ message: "unauthorized user" });
+    res.status(403).json({ message: "unauthorized user," });
   } else {
     try {
       const webToken = bearer.split(" ")[1];
@@ -13,8 +13,10 @@ const userAuth = async (req, res, next) => {
         res.status(404).json({ message: "valid token required" });
       }
       req.decodedToken = jwt.verify(webToken, process.env.SECRET_KEY);
+      next()
     } catch (err) {
-      return next(err);
+     //  return next(err);
+console.log(err)
     }
   }
 };

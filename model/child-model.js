@@ -8,6 +8,10 @@ const Child = sequelize.define("child", {
     allowNull: false,
     primaryKey: true,
   },
+  fullname: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
   biologicalSex: {
     type: Sequelize.STRING,
     allowNull: false,
