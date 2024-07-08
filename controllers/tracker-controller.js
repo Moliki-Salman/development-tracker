@@ -1,9 +1,11 @@
 const OpenAI = require("openai");
 const dotenv = require("dotenv");
 dotenv.config();
-const { checkConnection, queryValues } = require("../model/user-model");
+const ErrorResponse = require("../controllers/error-response");
+const { Child } = require("../model/child-model");
+// const { checkConnection, queryValues } = require("../model/user-model");
 
-let userEmail = null;
+// let userEmail = null;
 let dob = null;
 let fullname = null;
 let initialPromptSent = false;
@@ -83,4 +85,27 @@ const devTracker = async (req, res) => {
   }
 };
 
-module.exports = { devTracker };
+const dev1 = async (req, res, next) => {
+const { fullname, dob, child_id } = req.body
+  if (!fullname || !dob || !child_id) {
+    return next(new ErrorResponse("Content cannot be empty", 400));
+  }
+  try {
+    const childInfo = await Child.findByPk(child_id);
+
+if (childInfo.length > 0) {
+  // Handle multiple matches (e.g., display a list or provide pagination)
+  return res
+    .status(200)
+    .json({ message: "Multiple children found", data: childInfo });
+} else if (childInfo.length === 0) {
+  return res.status(404).json({ message: "Child not found" });
+}
+    console.log("CHILD INFORMATION", childInfo);
+    return res.status(200).json(childInfo);
+  } catch (err) {
+    return next(err);
+  }
+};
+
+module.exports = { devTracker, dev1 };
